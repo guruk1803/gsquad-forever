@@ -24,3 +24,4 @@ router.delete('/:id', authenticateAdmin, deleteCelebration)
 export default router
 
 
+

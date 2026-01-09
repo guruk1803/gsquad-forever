@@ -82,3 +82,4 @@ Should show: `nothing to commit, working tree clean`
 
 See `GIT_SETUP_GUIDE.md` for detailed instructions and troubleshooting.
 
+

@@ -1,8 +1,8 @@
-# Gsquad Forever - Deployment Guide
+# ⚠️ OLD DEPLOYMENT GUIDE - USE DEPLOY.md INSTEAD
 
-## Overview
+**Please use `DEPLOY.md` for the latest, simplified deployment guide.**
 
-This guide covers deploying Gsquad Forever to production using cloud services.
+This file is kept for reference but `DEPLOY.md` has everything you need in one place.
 
 ## Architecture
 
@@ -266,5 +266,6 @@ For deployment issues:
 2. Review logs in respective dashboards
 3. Consult service documentation
 4. Contact support if needed
+
 
 

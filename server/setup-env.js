@@ -51,3 +51,4 @@ console.log('2. Update DATABASE_URL with your PostgreSQL connection string')
 console.log('3. Run: npm run migrate')
 
 
+

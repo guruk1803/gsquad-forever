@@ -143,3 +143,4 @@ DEFAULT_ADMIN_PASSWORD=admin123
 - Make sure the database exists (create it if using local PostgreSQL)
 
 
+

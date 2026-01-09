@@ -67,3 +67,4 @@ npm run dev
 - id, celebration_id, name, message, amount, approved, created_at, updated_at
 
 
+

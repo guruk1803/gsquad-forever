@@ -65,10 +65,11 @@ npm run migrate
 npm run dev
 ```
 
-### 📖 Complete User Guide
+### 📖 Documentation
 
-For detailed step-by-step instructions and troubleshooting, see:
-- **[COMPLETE_USER_GUIDE.md](COMPLETE_USER_GUIDE.md)** - Full user guide with all features explained
+- **[COMPLETE_USER_GUIDE.md](COMPLETE_USER_GUIDE.md)** - Complete user guide
+- **[DEPLOY.md](DEPLOY.md)** - 🚀 **Deployment guide (use this!)**
+- **[SETUP.md](SETUP.md)** - Local development setup
 
 ## Project Structure
 

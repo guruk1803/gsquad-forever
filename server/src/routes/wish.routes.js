@@ -22,3 +22,4 @@ router.delete('/:id', authenticateAdmin, deleteWish)
 export default router
 
 
+

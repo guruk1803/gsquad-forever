@@ -36,3 +36,4 @@ const CelebrationContribution = ({ qrImage, celebrationId }) => {
 export default CelebrationContribution
 
 
+

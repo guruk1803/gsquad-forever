@@ -126,25 +126,30 @@ ON CONFLICT (email) DO NOTHING;
    - **Branch**: `main`
    - **Root Directory**: `server`
    - **Runtime**: Node
-   - **Build Command**: `npm install`
+   - **Build Command**: `npm install` (or leave empty - both work)
    - **Start Command**: `npm start`
    - **Plan**: **Free** (select this!)
 5. Environment Variables (click "Advanced" → "Add Environment Variable"):
+
+**Add these 8 variables one by one:**
 
 ```
 PORT=10000
 NODE_ENV=production
 DATABASE_URL=your_supabase_connection_string_here
 JWT_SECRET=generate_random_32_char_string_here
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-DEFAULT_ADMIN_PASSWORD=your_secure_password
+CLOUDINARY_CLOUD_NAME=dlkkhayzn
+CLOUDINARY_API_KEY=128736178937494
+CLOUDINARY_API_SECRET=YJHrfIhCYwhKmk7cI4B0Pj7zi9Q
+DEFAULT_ADMIN_PASSWORD=admin123
 ```
 
-**Generate JWT Secret:**
-- Go to: https://randomkeygen.com/
-- Copy a "CodeIgniter Encryption Keys" (32+ characters)
+**Important Notes:**
+- **DATABASE_URL**: Get from Supabase Settings → Database → Connection string → URI tab
+  - Replace `[YOUR-PASSWORD]` with your Supabase database password
+  - Format: `postgresql://postgres.xojqojqeavgkabepehai:YOUR_PASSWORD@aws-0-REGION.pooler.supabase.com:6543/postgres`
+- **JWT_SECRET**: Generate new one from https://randomkeygen.com/ (CodeIgniter Encryption Keys)
+- **Cloudinary values**: Already filled with your credentials above
 
 6. Click "Create Web Service"
 7. Wait for deployment (5-10 min)

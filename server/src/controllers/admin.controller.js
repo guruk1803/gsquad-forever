@@ -16,7 +16,21 @@ export const login = async (req, res) => {
       return res.status(500).json({ message: 'Server configuration error' })
     }
 
-    const result = await pool.query('SELECT * FROM admins WHERE email = $1', [email])
+    // Check if admins table exists first
+    let result
+    try {
+      result = await pool.query('SELECT * FROM admins WHERE email = $1', [email])
+    } catch (error) {
+      if (error.message.includes('does not exist') || error.message.includes('relation') || error.code === '42P01') {
+        console.error('❌ Database tables not found. Please run migrations first.')
+        console.error('   Run: npm run migrate')
+        return res.status(500).json({ 
+          message: 'Database not initialized. Please run migrations.',
+          error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        })
+      }
+      throw error // Re-throw other errors
+    }
 
     if (result.rows.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' })

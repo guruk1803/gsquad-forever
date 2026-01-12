@@ -153,12 +153,16 @@ DEFAULT_ADMIN_PASSWORD=admin123
 
 6. Click "Create Web Service"
 7. Wait for deployment (5-10 min)
-8. **Copy the URL** (e.g., `https://gsquad-forever-backend.onrender.com`)
+8. **Copy the URL** - It appears at the **TOP of your service page** in Render dashboard
+   - Look for: `https://gsquad-forever-backend.onrender.com` (or similar)
+   - **Where to find it:** Render Dashboard → Your Service → Top of page (below service name)
 
 **✅ Done!** Backend is live!
 
 **Test it:** Visit `https://your-render-url.onrender.com/api/health`
 Should see: `{"status":"ok","message":"Gsquad Forever API is running"}`
+
+**💡 Tip:** The URL is always displayed at the top of your Render service page after deployment!
 
 **Note:** Render free tier sleeps after 15 min. First request after sleep takes ~30 seconds (normal for free tier).
 
@@ -177,7 +181,8 @@ Should see: `{"status":"ok","message":"Gsquad Forever API is running"}`
 5. Environment Variables:
    - Click "Environment Variables"
    - Add: `VITE_API_URL` = `https://your-render-url.onrender.com/api`
-   - Replace with your actual Render URL from Step 3
+   - **Where to get the URL:** Go to Render Dashboard → Your Service → Copy URL from top of page
+   - ⚠️ **Important:** Add `/api` at the end! (e.g., `https://gsquad-forever-backend.onrender.com/api`)
 6. Click "Deploy"
 7. Wait for build (2-3 min)
 8. **Copy the URL** (e.g., `https://gsquad-forever.vercel.app`)

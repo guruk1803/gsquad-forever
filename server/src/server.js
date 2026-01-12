@@ -89,6 +89,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`)
   console.log(`📡 API Health: http://localhost:${PORT}/api/health`)
   console.log(`\n💡 Make sure your frontend is running to connect to this server\n`)
+  console.log(`💡 Database connection will be tested automatically...\n`)
 }).on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`❌ Port ${PORT} is already in use!`)

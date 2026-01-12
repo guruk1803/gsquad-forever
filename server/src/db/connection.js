@@ -74,7 +74,16 @@ const testConnection = async () => {
 }
 
 // Test connection after a short delay (to allow server to start)
-setTimeout(testConnection, 1000)
+// Only test if pool hasn't been closed (not in migration script)
+if (typeof process.env.SKIP_CONNECTION_TEST === 'undefined') {
+  setTimeout(() => {
+    if (!pool.ended) {
+      testConnection().catch(() => {
+        // Ignore errors in background test
+      })
+    }
+  }, 1000)
+}
 
 // Connection event handlers
 pool.on('connect', (client) => {

@@ -80,9 +80,22 @@ app.use((err, req, res, next) => {
   })
 })
 
-// 404 handler
+// 404 handler - Log details for debugging
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' })
+  console.log(`❌ 404 - Route not found: ${req.method} ${req.originalUrl}`)
+  console.log(`   Headers:`, req.headers)
+  res.status(404).json({ 
+    message: 'Route not found',
+    method: req.method,
+    path: req.originalUrl,
+    availableRoutes: {
+      admin: ['POST /api/admin/login', 'GET /api/admin/me'],
+      celebrations: ['GET /api/celebrations/slug/:slug', 'GET /api/celebrations', 'POST /api/celebrations', 'PUT /api/celebrations/:id', 'DELETE /api/celebrations/:id'],
+      wishes: ['GET /api/wishes/celebration/:celebrationId', 'POST /api/wishes', 'GET /api/wishes', 'PATCH /api/wishes/:id/approve', 'DELETE /api/wishes/:id'],
+      upload: ['POST /api/upload/image'],
+      health: ['GET /api/health']
+    }
+  })
 })
 
 app.listen(PORT, () => {

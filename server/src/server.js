@@ -23,29 +23,57 @@ const PORT = process.env.PORT || 5000
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true)
+    if (!origin) {
+      console.log('🌐 CORS: Allowing request with no origin')
+      return callback(null, true)
+    }
+    
+    console.log(`🌐 CORS: Checking origin: ${origin}`)
     
     // In development, allow localhost on any port
     if (process.env.NODE_ENV === 'development') {
       if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+        console.log('✅ CORS: Allowed (development localhost)')
         return callback(null, true)
       }
     }
     
-    // In production, allow specific origins
-    const allowedOrigins = process.env.ALLOWED_ORIGINS 
-      ? process.env.ALLOWED_ORIGINS.split(',')
-      : ['http://localhost:3000', 'http://localhost:3001']
+    // Build allowed origins list
+    const defaultOrigins = ['http://localhost:3000', 'http://localhost:3001']
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // Get allowed origins from environment variable
+    const envOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(o => o)
+      : []
+    
+    // Combine all allowed origins
+    const allowedOrigins = [...defaultOrigins, ...envOrigins]
+    
+    // Also allow common Vercel deployment URLs (for this specific project)
+    // This is a fallback - ideally set ALLOWED_ORIGINS in Render
+    const commonVercelUrls = [
+      'https://gsquad-forever-client.vercel.app',
+      'https://gsquad-forever.vercel.app',
+    ]
+    
+    // Check if origin is in allowed list or common Vercel URLs
+    const isAllowed = allowedOrigins.includes(origin) || 
+                     (process.env.NODE_ENV === 'production' && commonVercelUrls.includes(origin))
+    
+    if (isAllowed) {
+      console.log(`✅ CORS: Allowed origin: ${origin}`)
       callback(null, true)
     } else {
-      callback(new Error('Not allowed by CORS'))
+      console.error(`❌ CORS: Blocked origin: ${origin}`)
+      console.error(`   Allowed origins: ${allowedOrigins.join(', ')}`)
+      console.error(`   💡 Set ALLOWED_ORIGINS environment variable in Render to include: ${origin}`)
+      callback(new Error(`Not allowed by CORS. Origin: ${origin} is not in allowed list.`))
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
 // Middleware

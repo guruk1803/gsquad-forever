@@ -150,3 +150,4 @@ DEFAULT_ADMIN_PASSWORD=admin123
 
 **Once you have the Supabase DATABASE_URL, you're ready to deploy!**
 
+

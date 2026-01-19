@@ -178,3 +178,4 @@ ON CONFLICT (email) DO NOTHING;
 
 **Most likely issue: Database migrations not run!** Check Step 2 first! ✅
 
+

@@ -155,3 +155,4 @@ Both methods do the same thing - create your database tables!
 **I recommend using Supabase SQL Editor - it's simpler and you can see the results immediately!**
 
 
+

@@ -62,3 +62,4 @@ ON CONFLICT (email) DO NOTHING;
 SELECT '✅ Database migration completed successfully!' as status;
 
 
+

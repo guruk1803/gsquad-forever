@@ -198,3 +198,4 @@ Based on common problems:
 3. **Static asset 404** → Usually harmless, can ignore
 4. **Route doesn't exist** → Check the route is defined in `server/src/routes/`
 
+

@@ -2,15 +2,24 @@ import axios from 'axios'
 
 // Use relative URL in development to leverage Vite proxy, absolute URL in production
 const getBaseURL = () => {
+  // Priority 1: Use explicit VITE_API_URL if set (required for production)
   if (import.meta.env.VITE_API_URL) {
+    console.log('🌐 Using API URL from VITE_API_URL:', import.meta.env.VITE_API_URL)
     return import.meta.env.VITE_API_URL
   }
-  // In development, use relative URL to go through Vite proxy
+  
+  // Priority 2: In development, use relative URL to go through Vite proxy
   if (import.meta.env.DEV) {
+    console.log('🌐 Using relative API URL for development (via Vite proxy)')
     return '/api'
   }
-  // Fallback for production
-  return 'http://localhost:5000/api'
+  
+  // Priority 3: Production fallback - use Render URL
+  // ⚠️ WARNING: This should not be needed if VITE_API_URL is set correctly in Vercel
+  const productionFallback = 'https://gsquad-forever.onrender.com/api'
+  console.warn('⚠️ VITE_API_URL not set! Using fallback:', productionFallback)
+  console.warn('⚠️ Please set VITE_API_URL in Vercel environment variables!')
+  return productionFallback
 }
 
 export const api = axios.create({

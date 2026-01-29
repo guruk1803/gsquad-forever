@@ -76,6 +76,10 @@ const corsOptions = {
   optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+// Trust proxy (required for Render and other hosting platforms)
+// This allows Express to correctly identify the client IP when behind a proxy
+app.set('trust proxy', true)
+
 // Middleware
 app.use(cors(corsOptions))
 app.use(express.json())

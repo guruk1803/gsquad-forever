@@ -24,15 +24,17 @@ try {
   connectionHost = url.hostname
   // Detect Supabase by hostname
   isSupabase = connectionHost.includes('supabase.co') || connectionHost.includes('supabase.com')
+  // Detect Neon by hostname
+  const isNeon = connectionHost.includes('neon.tech') || connectionHost.includes('neon.tech')
 } catch (error) {
   console.error('❌ Invalid DATABASE_URL format:', error.message)
   console.error('Expected format: postgresql://username:password@host:port/database')
   process.exit(1)
 }
 
-// Configure SSL - Supabase always requires SSL
-// For Supabase, always use SSL. For others, use SSL in production only.
-const sslConfig = isSupabase || process.env.NODE_ENV === 'production'
+// Configure SSL - Supabase and Neon always require SSL
+// For Supabase/Neon, always use SSL. For others, use SSL in production only.
+const sslConfig = (isSupabase || isNeon || process.env.NODE_ENV === 'production')
   ? { rejectUnauthorized: false }
   : false
 
@@ -104,6 +106,9 @@ const testConnectionWithRetry = async (retries = 3, delay = 2000) => {
         if (usePooler) {
           console.log('   Using pooler connection (port 6543)')
         }
+      } else if (isNeon) {
+        console.log('📊 Connected to Neon PostgreSQL')
+        console.log('   Serverless PostgreSQL - optimized for hosting platforms')
       }
       console.log(`🕐 Server time: ${result.rows[0].current_time}`)
       return // Success, exit retry loop

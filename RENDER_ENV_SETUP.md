@@ -45,6 +45,11 @@ Once you have the Supabase connection string, use these values in Render:
 - **Key**: `DATABASE_URL`
 - **Value**: `postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
 - ⚠️ **Replace with your actual Supabase connection string from above!**
+- ⚠️ **IMPORTANT:** If your password contains special characters (`@`, `#`, `%`, etc.), you MUST URL-encode them:
+  - `@` → `%40`
+  - `#` → `%23`
+  - `%` → `%25`
+  - Example: Password `back@youGuru318` becomes `back%40youGuru318`
 
 ### Variable 4: JWT_SECRET
 - **Key**: `JWT_SECRET`

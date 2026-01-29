@@ -17,9 +17,17 @@ export const login = async (req, res) => {
     }
 
     // Check if admins table exists first
+    // Use queryWithRetry for automatic retry on timeout
     let result
     try {
-      result = await pool.query('SELECT * FROM admins WHERE email = $1', [email])
+      // Try with retry first, fallback to regular query
+      try {
+        const { queryWithRetry } = await import('../db/connection.js')
+        result = await queryWithRetry('SELECT * FROM admins WHERE email = $1', [email])
+      } catch (importError) {
+        // Fallback to regular query if retry not available
+        result = await pool.query('SELECT * FROM admins WHERE email = $1', [email])
+      }
     } catch (error) {
       if (error.message.includes('does not exist') || error.message.includes('relation') || error.code === '42P01') {
         console.error('❌ Database tables not found. Please run migrations first.')

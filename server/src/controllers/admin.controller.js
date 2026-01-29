@@ -57,12 +57,29 @@ export const login = async (req, res) => {
       },
     })
   } catch (error) {
-    console.error('Login error:', error)
+    console.error('❌ Login error:', error)
     console.error('Error details:', {
       message: error.message,
       code: error.code,
       stack: error.stack
     })
+    
+    // More detailed error logging for production debugging
+    if (process.env.NODE_ENV === 'production') {
+      console.error('🔍 Production error details:')
+      console.error('   Error message:', error.message)
+      console.error('   Error code:', error.code)
+      if (error.message.includes('JWT_SECRET')) {
+        console.error('   💡 JWT_SECRET is missing or invalid')
+      }
+      if (error.message.includes('password') || error.message.includes('bcrypt')) {
+        console.error('   💡 Password hashing/verification failed')
+      }
+      if (error.message.includes('connection') || error.message.includes('ECONNREFUSED')) {
+        console.error('   💡 Database connection failed - check DATABASE_URL')
+      }
+    }
+    
     res.status(500).json({ 
       message: 'Login failed',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined

@@ -199,3 +199,9 @@ Based on common problems:
 4. **Route doesn't exist** → Check the route is defined in `server/src/routes/`
 
 
+
+
+
+
+
+

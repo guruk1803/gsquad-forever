@@ -96,6 +96,7 @@ const testGetMe = async (token) => {
   }
 }
 
+
 // Run all tests
 const runTests = async () => {
   console.log('='.repeat(50))
@@ -135,6 +136,12 @@ runTests().catch(error => {
   console.error('Test suite failed:', error)
   process.exit(1)
 })
+
+
+
+
+
+
 
 
 

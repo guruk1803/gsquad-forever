@@ -47,20 +47,29 @@ if (isSupabase && !usePooler) {
   console.warn('   Pooler URL format: postgresql://postgres.xxx:password@aws-0-region.pooler.supabase.com:6543/postgres')
 }
 
-const pool = new Pool({
+// Connection pool settings - optimized for pooler connections
+const poolConfig = {
   connectionString: connectionString,
   ssl: sslConfig,
   // Connection pool settings for better reliability
-  max: 20,
+  max: usePooler ? 10 : 20, // Pooler has connection limits, use fewer connections
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
-  // Force IPv4 if IPv6 is causing issues (Render may not support IPv6)
-  // This is handled by using pooler connection, but we can also set family
-  ...(process.env.NODE_ENV === 'production' && !usePooler ? { 
-    // Only force IPv4 if not using pooler and in production
-    // Note: pg library doesn't directly support family, but pooler avoids this
-  } : {}),
-})
+  // Increase timeout for pooler connections (they can be slower to establish)
+  connectionTimeoutMillis: usePooler ? 30000 : 10000, // 30s for pooler, 10s for direct
+  // Statement timeout for queries (prevent hanging queries)
+  statement_timeout: 30000, // 30 seconds
+}
+
+// Log connection details
+if (usePooler) {
+  console.log('🔗 Using Supabase pooler connection (port 6543)')
+  console.log('   Connection timeout: 30s')
+} else if (isSupabase) {
+  console.log('🔗 Using Supabase direct connection (port 5432)')
+  console.log('   Connection timeout: 10s')
+}
+
+const pool = new Pool(poolConfig)
 
 // Test connection on startup
 let connectionTested = false
@@ -79,14 +88,34 @@ const testConnection = async () => {
   } catch (error) {
     console.error('❌ Database connection test failed:', error.message)
     console.error('💡 Check your DATABASE_URL in environment variables')
-    if (error.message.includes('password')) {
+    
+    if (error.message.includes('timeout') || error.message.includes('ETIMEDOUT')) {
+      console.error('💡 Connection timeout - possible causes:')
+      console.error('   1. Network issue between Render and Supabase')
+      console.error('   2. Supabase project might be paused (check dashboard)')
+      console.error('   3. Firewall blocking connection')
+      if (usePooler) {
+        console.error('   4. Pooler might be overloaded (try again in a moment)')
+        console.error('   💡 The app will retry on first query - this might work')
+      }
+    }
+    
+    if (error.message.includes('password') || error.message.includes('authentication')) {
       console.error('💡 Tip: Special characters in passwords need URL encoding')
       console.error('   Example: @ becomes %40, # becomes %23')
     }
     if (error.message.includes('SSL') || error.message.includes('ssl')) {
       console.error('💡 Tip: Supabase requires SSL. Make sure SSL is enabled.')
     }
+    if (error.message.includes('ENOTFOUND') || error.message.includes('ENETUNREACH')) {
+      console.error('💡 Tip: Check that the hostname in DATABASE_URL is correct')
+      if (usePooler) {
+        console.error('   Pooler format: aws-0-[REGION].pooler.supabase.com:6543')
+      }
+    }
+    
     // Don't exit - let the app try to connect on first query
+    // Sometimes the initial test fails but actual queries work
   }
 }
 

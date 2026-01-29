@@ -36,13 +36,30 @@ const sslConfig = isSupabase || process.env.NODE_ENV === 'production'
   ? { rejectUnauthorized: false }
   : false
 
+// Parse connection string to check if we should use pooler
+const connectionString = process.env.DATABASE_URL
+const usePooler = connectionString.includes('pooler.supabase.com') || connectionString.includes(':6543')
+
+// For Supabase, prefer pooler connection (port 6543) over direct (port 5432)
+// Pooler is more reliable for serverless/hosting platforms and avoids IPv6 issues
+if (isSupabase && !usePooler) {
+  console.warn('⚠️  Using direct Supabase connection. Consider using pooler for better reliability.')
+  console.warn('   Pooler URL format: postgresql://postgres.xxx:password@aws-0-region.pooler.supabase.com:6543/postgres')
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: connectionString,
   ssl: sslConfig,
   // Connection pool settings for better reliability
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
+  // Force IPv4 if IPv6 is causing issues (Render may not support IPv6)
+  // This is handled by using pooler connection, but we can also set family
+  ...(process.env.NODE_ENV === 'production' && !usePooler ? { 
+    // Only force IPv4 if not using pooler and in production
+    // Note: pg library doesn't directly support family, but pooler avoids this
+  } : {}),
 })
 
 // Test connection on startup

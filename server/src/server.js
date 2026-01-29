@@ -78,7 +78,9 @@ const corsOptions = {
 
 // Trust proxy (required for Render and other hosting platforms)
 // This allows Express to correctly identify the client IP when behind a proxy
-app.set('trust proxy', true)
+// Set to 1 to only trust the first proxy (Render's proxy), not all proxies
+// This prevents IP-based rate limiting bypass while still working with Render
+app.set('trust proxy', 1)
 
 // Middleware
 app.use(cors(corsOptions))

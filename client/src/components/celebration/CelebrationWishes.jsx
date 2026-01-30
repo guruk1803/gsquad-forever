@@ -101,9 +101,9 @@ const CelebrationWishes = ({ celebrationId }) => {
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-800 mb-1">{wish.name}</h4>
                     <p className="text-gray-600 mb-2">{wish.message}</p>
-                    {wish.amount && (
+                    {wish.amount && Number(wish.amount) > 0 && (
                       <p className="text-sm text-primary font-medium">
-                        Contributed: ₹{wish.amount.toFixed(2)}
+                        Contributed: ₹{Number(wish.amount).toFixed(2)}
                       </p>
                     )}
                     <p className="text-xs text-gray-400 mt-2">

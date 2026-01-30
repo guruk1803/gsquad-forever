@@ -104,9 +104,9 @@ const AdminWishes = () => {
                     )}
                   </div>
                   <p className="text-gray-600 mb-2">{wish.message}</p>
-                  {wish.amount && (
+                  {wish.amount && Number(wish.amount) > 0 && (
                     <p className="text-sm text-primary font-medium mb-2">
-                      Contributed: ₹{wish.amount.toFixed(2)}
+                      Contributed: ₹{Number(wish.amount).toFixed(2)}
                     </p>
                   )}
                   <p className="text-xs text-gray-400 mb-2">

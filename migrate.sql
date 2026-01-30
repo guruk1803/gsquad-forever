@@ -49,12 +49,11 @@ CREATE INDEX IF NOT EXISTS idx_wishes_celebration_id ON wishes(celebration_id);
 CREATE INDEX IF NOT EXISTS idx_wishes_approved ON wishes(approved);
 
 -- Create default admin (password: admin123)
--- Note: This hash is for 'admin123' - if you changed DEFAULT_ADMIN_PASSWORD in Render, 
--- you'll need to generate a new hash or use the migrate.js script
+-- This hash is for 'admin123' - generated with bcrypt
 INSERT INTO admins (email, password_hash) 
 VALUES (
   'admin@gsquadforever.com',
-  '$2a$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZqZq'
+  '$2a$10$FgBedt/JedODo1G9ojD3r.GUoipiqDOpOe073rFSi3B9b47.jyvea'
 )
 ON CONFLICT (email) DO NOTHING;
 

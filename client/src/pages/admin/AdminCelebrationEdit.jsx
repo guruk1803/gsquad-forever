@@ -22,6 +22,7 @@ const AdminCelebrationEdit = () => {
     images: [],
     videos: [],
     qrImage: '',
+    spotifyCode: '',
     moneyCollectionEnabled: false,
     theme: {
       primaryColor: '#9B7EDE',
@@ -92,6 +93,7 @@ const AdminCelebrationEdit = () => {
         images: Array.isArray(data.images) ? data.images : [],
         videos: Array.isArray(data.videos) ? data.videos : [],
         qrImage: data.qr_image || '',
+        spotifyCode: data.spotify_code || '',
         moneyCollectionEnabled: data.money_collection_enabled || false,
         theme: data.theme || {
           primaryColor: '#9B7EDE',
@@ -226,6 +228,9 @@ const AdminCelebrationEdit = () => {
       } else if (type === 'qr') {
         setFormData(prev => ({ ...prev, qrImage: response.data.url }))
         console.log('✅ QR image updated')
+      } else if (type === 'spotify') {
+        setFormData(prev => ({ ...prev, spotifyCode: response.data.url }))
+        console.log('✅ Spotify code image updated')
       } else {
         setFormData(prev => ({ 
           ...prev, 
@@ -586,6 +591,41 @@ const AdminCelebrationEdit = () => {
               </div>
             </div>
           )}
+        </div>
+        
+        <div className="card space-y-4">
+          <h2 className="text-xl font-semibold">Spotify Code</h2>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Spotify Code Image
+            </label>
+            {formData.spotifyCode && (
+              <img src={formData.spotifyCode} alt="Spotify Code" className="w-48 h-48 object-contain rounded-xl mb-2" />
+            )}
+            <div className="space-y-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, 'spotify')}
+                className="input-field"
+                disabled={uploading.type === 'spotify'}
+              />
+              {uploading.type === 'spotify' && (
+                <div className="space-y-1">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${uploading.progress}%` }}
+                    />
+                  </div>
+                  <p className="text-sm text-gray-600">Uploading Spotify code... {uploading.progress}%</p>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Upload your Spotify code image. It will be displayed with "Scan and feel" text.
+            </p>
+          </div>
         </div>
         
         <div className="flex gap-4">

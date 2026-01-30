@@ -13,7 +13,7 @@ const Home = () => {
         </div>
         
         <p className="text-xl md:text-2xl text-gray-600 font-light">
-          Create beautiful, customizable celebration pages for your special moments
+          Celebrating moments that last forever
         </p>
         
         <div className="flex flex-wrap justify-center gap-4 mt-12">

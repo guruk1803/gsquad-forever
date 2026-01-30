@@ -8,6 +8,8 @@ import CelebrationStory from '../components/celebration/CelebrationStory'
 import CelebrationGallery from '../components/celebration/CelebrationGallery'
 import CelebrationWishes from '../components/celebration/CelebrationWishes'
 import CelebrationContribution from '../components/celebration/CelebrationContribution'
+import CelebrationSpotify from '../components/celebration/CelebrationSpotify'
+import CelebrationFooter from '../components/celebration/CelebrationFooter'
 
 const CelebrationPage = () => {
   const { slug } = useParams()
@@ -48,6 +50,7 @@ const CelebrationPage = () => {
         images: Array.isArray(data.images) ? data.images : [],
         videos: Array.isArray(data.videos) ? data.videos : [],
         qrImage: data.qr_image || data.qrImage,
+        spotifyCode: data.spotify_code || data.spotifyCode,
         moneyCollectionEnabled: data.money_collection_enabled ?? data.moneyCollectionEnabled,
         theme: data.theme || {
           primaryColor: '#9B7EDE',
@@ -127,6 +130,12 @@ const CelebrationPage = () => {
           celebrationId={celebration.id}
         />
       )}
+      
+      {celebration.spotifyCode && (
+        <CelebrationSpotify spotifyCode={celebration.spotifyCode} />
+      )}
+      
+      <CelebrationFooter />
     </div>
   )
 }

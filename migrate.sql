@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS celebrations (
   images TEXT[],
   videos TEXT[],
   qr_image TEXT,
+  spotify_code TEXT,
   money_collection_enabled BOOLEAN DEFAULT false,
   theme JSONB DEFAULT '{"primaryColor": "#9B7EDE", "secondaryColor": "#E8D5FF", "animationsEnabled": true}'::jsonb,
   sections JSONB DEFAULT '{"header": true, "story": true, "gallery": true, "wishes": true, "contribution": true}'::jsonb,

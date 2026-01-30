@@ -13,7 +13,7 @@ const CelebrationHeader = ({ celebration }) => {
           <img 
             src={celebration.coverImage} 
             alt={celebration.title}
-            className="w-full max-w-2xl mx-auto rounded-3xl shadow-2xl object-cover"
+            className="w-full max-w-4xl mx-auto rounded-3xl shadow-2xl object-cover h-[60vh] md:h-[70vh]"
           />
         )}
         

@@ -138,8 +138,8 @@ export const createCelebration = async (req, res) => {
     const result = await pool.query(
       `INSERT INTO celebrations (
         title, subtitle, slug, event_type, event_date, story, cover_image,
-        images, videos, qr_image, money_collection_enabled, theme, sections, quotes
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+        images, videos, qr_image, spotify_code, money_collection_enabled, theme, sections, quotes
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING *`,
       [
         title,
@@ -152,6 +152,7 @@ export const createCelebration = async (req, res) => {
         images || [],
         videos || [],
         qrImage || null,
+        req.body.spotifyCode || null,
         moneyCollectionEnabled || false,
         JSON.stringify(theme || { primaryColor: '#9B7EDE', secondaryColor: '#E8D5FF', animationsEnabled: true }),
         JSON.stringify(sections || { header: true, story: true, gallery: true, wishes: true, contribution: true }),
@@ -187,6 +188,7 @@ export const updateCelebration = async (req, res) => {
       images,
       videos,
       qrImage,
+      spotifyCode,
       moneyCollectionEnabled,
       theme,
       sections,
@@ -230,12 +232,13 @@ export const updateCelebration = async (req, res) => {
         images = COALESCE($8, images),
         videos = COALESCE($9, videos),
         qr_image = COALESCE($10, qr_image),
-        money_collection_enabled = COALESCE($11, money_collection_enabled),
-        theme = COALESCE($12::jsonb, theme),
-        sections = COALESCE($13::jsonb, sections),
-        quotes = COALESCE($14, quotes),
+        spotify_code = COALESCE($11, spotify_code),
+        money_collection_enabled = COALESCE($12, money_collection_enabled),
+        theme = COALESCE($13::jsonb, theme),
+        sections = COALESCE($14::jsonb, sections),
+        quotes = COALESCE($15, quotes),
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $15
+      WHERE id = $16
       RETURNING *`,
       [
         title,
@@ -248,6 +251,7 @@ export const updateCelebration = async (req, res) => {
         images,
         videos,
         qrImage,
+        spotifyCode || null,
         moneyCollectionEnabled,
         theme ? JSON.stringify(theme) : null,
         sections ? JSON.stringify(sections) : null,

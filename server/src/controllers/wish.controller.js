@@ -60,10 +60,10 @@ export const createWish = async (req, res) => {
       return res.status(404).json({ message: 'Celebration not found' })
     }
 
-    // Auto-approve wishes so they show immediately on public page
+    // Wishes need admin approval before showing on public page
     const result = await pool.query(
       `INSERT INTO wishes (celebration_id, name, message, amount, approved)
-       VALUES ($1, $2, $3, $4, true)
+       VALUES ($1, $2, $3, $4, false)
        RETURNING *`,
       [celebrationId, name, message, amount || null]
     )

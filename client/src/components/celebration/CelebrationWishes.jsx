@@ -15,8 +15,8 @@ const CelebrationWishes = ({ celebrationId }) => {
   const fetchWishes = async () => {
     try {
       const response = await api.get(`/wishes/celebration/${celebrationId}`)
-      // Show all wishes on public page (they're auto-approved now)
-      setWishes(response.data)
+      // Only show approved wishes on public page
+      setWishes(response.data.filter(w => w.approved))
     } catch (error) {
       console.error('Error fetching wishes:', error)
     } finally {
@@ -32,7 +32,7 @@ const CelebrationWishes = ({ celebrationId }) => {
         celebrationId,
         amount: formData.amount ? parseFloat(formData.amount) : null,
       })
-      toast.success('Your wish has been submitted!')
+      toast.success('Your wish has been submitted! It will appear after admin approval.')
       setFormData({ name: '', message: '', amount: '' })
       fetchWishes()
     } catch (error) {

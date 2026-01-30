@@ -8,12 +8,15 @@ const Home = () => {
         <div className="flex justify-center items-center gap-3 mb-6">
           <Heart className="w-12 h-12 text-primary fill-primary animate-float" />
           <h1 className="text-5xl md:text-6xl font-serif font-bold text-gray-800">
-            Gsquad Forever
+            GsquaD Forever
           </h1>
         </div>
         
-        <p className="text-xl md:text-2xl text-gray-600 font-light">
+        <p className="text-xl md:text-2xl text-gray-600 font-light mb-2">
           Celebrating moments that last forever
+        </p>
+        <p className="text-lg text-gray-500 font-medium">
+          என் நெஞ்சில் குடியிருக்கும்
         </p>
         
         <div className="flex flex-wrap justify-center gap-4 mt-12">

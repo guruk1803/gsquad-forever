@@ -213,3 +213,4 @@ postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.co
 2. Run migrations
 3. Test login
 
+

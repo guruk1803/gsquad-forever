@@ -13,8 +13,9 @@ if (!process.env.DATABASE_URL) {
   process.exit(1)
 }
 
-// Parse connection string to validate format and detect Supabase
+// Parse connection string to validate format and detect Supabase/Neon
 let isSupabase = false
+let isNeon = false
 let connectionHost = ''
 try {
   const url = new URL(process.env.DATABASE_URL)
@@ -25,7 +26,7 @@ try {
   // Detect Supabase by hostname
   isSupabase = connectionHost.includes('supabase.co') || connectionHost.includes('supabase.com')
   // Detect Neon by hostname
-  const isNeon = connectionHost.includes('neon.tech') || connectionHost.includes('neon.tech')
+  isNeon = connectionHost.includes('neon.tech')
 } catch (error) {
   console.error('❌ Invalid DATABASE_URL format:', error.message)
   console.error('Expected format: postgresql://username:password@host:port/database')

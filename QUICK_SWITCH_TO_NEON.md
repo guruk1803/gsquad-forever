@@ -49,3 +49,4 @@ postgresql://username:password@ep-xxx-xxx.us-east-1.aws.neon.tech/neondb?sslmode
 
 **Switch now and your connection issues will be solved!** 🚀
 
+

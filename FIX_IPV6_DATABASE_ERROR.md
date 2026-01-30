@@ -177,3 +177,4 @@ After switching to pooler:
 postgresql://postgres.[PROJECT-REF]:[ENCODED-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
 ```
 
+

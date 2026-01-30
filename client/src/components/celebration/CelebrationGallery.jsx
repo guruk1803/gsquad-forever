@@ -66,25 +66,6 @@ const CelebrationGallery = ({ images }) => {
     }
   }, [images, animationsEnabled])
 
-  const [currentIndex, setCurrentIndex] = useState(0)
-
-  const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length)
-  }
-
-  const prevImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-  }
-
-  // Auto-slide carousel
-  useEffect(() => {
-    if (images.length <= 1) return
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length)
-    }, 5000) // Change image every 5 seconds
-    return () => clearInterval(interval)
-  }, [images.length])
-
   return (
     <section className="py-16 px-4 bg-white/50 overflow-hidden">
       <div className="max-w-7xl mx-auto">

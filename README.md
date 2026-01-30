@@ -67,9 +67,13 @@ npm run dev
 
 ### 📖 Documentation
 
-- **[COMPLETE_USER_GUIDE.md](COMPLETE_USER_GUIDE.md)** - Complete user guide
-- **[DEPLOY.md](DEPLOY.md)** - 🚀 **Deployment guide (use this!)**
-- **[SETUP.md](SETUP.md)** - Local development setup
+All documentation is organized in the [`docs/`](./docs/) folder:
+
+- **[📚 Documentation Index](./docs/README.md)** - Complete documentation overview
+- **[🚀 Deployment Guide](./docs/deployment/DEPLOY.md)** - Production deployment
+- **[⚙️ Setup Guide](./docs/project-flow/SETUP.md)** - Local development setup
+- **[🔌 API Documentation](./docs/api-flow/README.md)** - API endpoints
+- **[💾 Database Guide](./docs/database/README.md)** - Database setup
 
 ## Project Structure
 

@@ -15,7 +15,8 @@ const CelebrationWishes = ({ celebrationId }) => {
   const fetchWishes = async () => {
     try {
       const response = await api.get(`/wishes/celebration/${celebrationId}`)
-      setWishes(response.data.filter(w => w.approved))
+      // Show all wishes on public page (they're auto-approved now)
+      setWishes(response.data)
     } catch (error) {
       console.error('Error fetching wishes:', error)
     } finally {
@@ -106,7 +107,7 @@ const CelebrationWishes = ({ celebrationId }) => {
                       </p>
                     )}
                     <p className="text-xs text-gray-400 mt-2">
-                      {new Date(wish.createdAt).toLocaleDateString()}
+                      {new Date(wish.created_at || wish.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>

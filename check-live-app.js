@@ -1,4 +1,10 @@
-// Quick script to check live app status
+/**
+ * Live App Test Script
+ * Tests backend, frontend, and database connectivity
+ * 
+ * Usage: node check-live-app.js
+ */
+
 import axios from 'axios'
 
 const BACKEND_URL = 'https://gsquad-forever.onrender.com'

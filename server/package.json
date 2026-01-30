@@ -7,11 +7,7 @@
     "start": "node src/server.js",
     "build": "echo 'No build step needed for Node.js server'",
     "migrate": "node src/db/migrate.js",
-    "setup-env": "node setup-env.js",
-    "start:check": "node start-server.js",
-    "test:db": "node test-connection.js",
-    "test:api": "node test-api.js",
-    "test": "npm run test:db && npm run test:api"
+    "setup-env": "node setup-env.js"
   },
   "dependencies": {
     "express": "^4.18.2",

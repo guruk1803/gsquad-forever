@@ -315,9 +315,9 @@ const extractPublicId = (url) => {
 }
 
 /**
- * Delete an image from Cloudinary by public_id
+ * Delete an image or video from Cloudinary by public_id
  */
-const deleteCloudinaryImage = async (publicId) => {
+const deleteCloudinaryMedia = async (publicId, resourceType = 'image') => {
   if (!publicId) return false
   
   try {
@@ -325,57 +325,64 @@ const deleteCloudinaryImage = async (publicId) => {
     if (!process.env.CLOUDINARY_CLOUD_NAME || 
         !process.env.CLOUDINARY_API_KEY || 
         !process.env.CLOUDINARY_API_SECRET) {
-      console.warn('⚠️ Cloudinary not configured, skipping image deletion')
+      console.warn('⚠️ Cloudinary not configured, skipping media deletion')
       return false
     }
     
-    const result = await cloudinary.uploader.destroy(publicId)
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: resourceType
+    })
     
     if (result.result === 'ok' || result.result === 'not found') {
-      console.log(`✅ Deleted image from Cloudinary: ${publicId}`)
+      console.log(`✅ Deleted ${resourceType} from Cloudinary: ${publicId}`)
       return true
     } else {
-      console.warn(`⚠️ Failed to delete image from Cloudinary: ${publicId}`, result)
+      console.warn(`⚠️ Failed to delete ${resourceType} from Cloudinary: ${publicId}`, result)
       return false
     }
   } catch (error) {
-    console.error(`❌ Error deleting image from Cloudinary (${publicId}):`, error.message)
+    console.error(`❌ Error deleting ${resourceType} from Cloudinary (${publicId}):`, error.message)
     return false
   }
 }
 
 /**
- * Delete all images associated with a celebration from Cloudinary
+ * Delete all images and videos associated with a celebration from Cloudinary
  */
-const deleteCelebrationImages = async (celebration) => {
-  const deletedImages = []
-  const failedImages = []
+const deleteCelebrationMedia = async (celebration) => {
+  const deletedMedia = []
+  const failedMedia = []
   
   // Collect all image URLs
   const imageUrls = []
   
   // Cover image
   if (celebration.cover_image) {
-    imageUrls.push(celebration.cover_image)
+    imageUrls.push({ url: celebration.cover_image, type: 'image' })
   }
   
   // Images array
   if (celebration.images && Array.isArray(celebration.images)) {
-    imageUrls.push(...celebration.images)
+    imageUrls.push(...celebration.images.map(url => ({ url, type: 'image' })))
   }
   
   // QR image
   if (celebration.qr_image) {
-    imageUrls.push(celebration.qr_image)
+    imageUrls.push({ url: celebration.qr_image, type: 'image' })
   }
   
   // Spotify code image
   if (celebration.spotify_code) {
-    imageUrls.push(celebration.spotify_code)
+    imageUrls.push({ url: celebration.spotify_code, type: 'image' })
   }
   
-  // Delete each image
-  for (const url of imageUrls) {
+  // Videos array
+  if (celebration.videos && Array.isArray(celebration.videos)) {
+    imageUrls.push(...celebration.videos.map(url => ({ url, type: 'video' })))
+  }
+  
+  // Delete each media item
+  for (const { url, type } of imageUrls) {
     if (!url) continue
     
     const publicId = extractPublicId(url)
@@ -384,15 +391,15 @@ const deleteCelebrationImages = async (celebration) => {
       continue
     }
     
-    const deleted = await deleteCloudinaryImage(publicId)
+    const deleted = await deleteCloudinaryMedia(publicId, type)
     if (deleted) {
-      deletedImages.push(publicId)
+      deletedMedia.push({ publicId, type })
     } else {
-      failedImages.push(publicId)
+      failedMedia.push({ publicId, type })
     }
   }
   
-  return { deletedImages, failedImages }
+  return { deletedMedia, failedMedia }
 }
 
 export const deleteCelebration = async (req, res) => {
@@ -418,13 +425,15 @@ export const deleteCelebration = async (req, res) => {
     
     const celebration = celebrationResult.rows[0]
     
-    // Delete all images from Cloudinary
-    console.log(`🗑️ Deleting images for celebration: ${celebration.title} (ID: ${celebrationId})`)
-    const { deletedImages, failedImages } = await deleteCelebrationImages(celebration)
+    // Delete all images and videos from Cloudinary
+    console.log(`🗑️ Deleting media for celebration: ${celebration.title} (ID: ${celebrationId})`)
+    const { deletedMedia, failedMedia } = await deleteCelebrationMedia(celebration)
     
-    console.log(`✅ Deleted ${deletedImages.length} images from Cloudinary`)
-    if (failedImages.length > 0) {
-      console.warn(`⚠️ Failed to delete ${failedImages.length} images from Cloudinary`)
+    const imageCount = deletedMedia.filter(m => m.type === 'image').length
+    const videoCount = deletedMedia.filter(m => m.type === 'video').length
+    console.log(`✅ Deleted ${imageCount} images and ${videoCount} videos from Cloudinary`)
+    if (failedMedia.length > 0) {
+      console.warn(`⚠️ Failed to delete ${failedMedia.length} media items from Cloudinary`)
     }
     
     // Delete the celebration from database (this will cascade delete wishes due to ON DELETE CASCADE)
@@ -439,8 +448,8 @@ export const deleteCelebration = async (req, res) => {
     
     res.json({ 
       message: 'Celebration deleted successfully',
-      deletedImages: deletedImages.length,
-      failedImages: failedImages.length
+      deletedMedia: deletedMedia.length,
+      failedMedia: failedMedia.length
     })
   } catch (error) {
     console.error('Delete celebration error:', error)

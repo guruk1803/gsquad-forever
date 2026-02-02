@@ -33,7 +33,7 @@ const corsOptions = {
     // In development, allow localhost on any port
     if (process.env.NODE_ENV === 'development') {
       if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
-        console.log('✅ CORS: Allowed (development localhost)')
+        console.log('✅CORS: Allowed (development localhost)')
         return callback(null, true)
       }
     }

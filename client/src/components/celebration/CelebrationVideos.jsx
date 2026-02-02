@@ -1,0 +1,244 @@
+import { useState, useEffect, useRef } from 'react'
+import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTheme } from '../../contexts/ThemeContext'
+
+const CelebrationVideos = ({ videos }) => {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [playingIndex, setPlayingIndex] = useState(null)
+  const [visibleVideos, setVisibleVideos] = useState([])
+  const videoRefs = useRef({})
+  const galleryRef = useRef(null)
+  const { theme } = useTheme()
+  const animationsEnabled = theme?.animationsEnabled !== false
+
+  const nextVideo = () => {
+    // Pause current video
+    if (playingIndex !== null && videoRefs.current[playingIndex]) {
+      videoRefs.current[playingIndex].pause()
+    }
+    setCurrentIndex((prev) => (prev + 1) % videos.length)
+    setPlayingIndex(null)
+  }
+
+  const prevVideo = () => {
+    // Pause current video
+    if (playingIndex !== null && videoRefs.current[playingIndex]) {
+      videoRefs.current[playingIndex].pause()
+    }
+    setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length)
+    setPlayingIndex(null)
+  }
+
+  const togglePlay = (index) => {
+    if (playingIndex === index) {
+      // Pause current video
+      if (videoRefs.current[index]) {
+        videoRefs.current[index].pause()
+      }
+      setPlayingIndex(null)
+    } else {
+      // Pause any other playing video
+      if (playingIndex !== null && videoRefs.current[playingIndex]) {
+        videoRefs.current[playingIndex].pause()
+      }
+      // Play selected video
+      if (videoRefs.current[index]) {
+        videoRefs.current[index].play()
+      }
+      setPlayingIndex(index)
+    }
+  }
+
+  // Handle video end
+  const handleVideoEnd = (index) => {
+    setPlayingIndex(null)
+    // Auto-advance to next video
+    if (index < videos.length - 1) {
+      setTimeout(() => {
+        setCurrentIndex(index + 1)
+      }, 1000)
+    }
+  }
+
+  // Auto-slide carousel (only if no video is playing)
+  useEffect(() => {
+    if (videos.length <= 1 || playingIndex !== null) return
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % videos.length)
+    }, 8000) // Change video every 8 seconds
+    return () => clearInterval(interval)
+  }, [videos.length, playingIndex])
+
+  useEffect(() => {
+    // Staggered animation for videos
+    if (animationsEnabled) {
+      const timer = setTimeout(() => {
+        videos.forEach((_, index) => {
+          setTimeout(() => {
+            setVisibleVideos(prev => [...prev, index])
+          }, index * 100) // 100ms delay between each video
+        })
+      }, 200)
+      return () => clearTimeout(timer)
+    } else {
+      setVisibleVideos(videos.map((_, i) => i))
+    }
+  }, [videos, animationsEnabled])
+
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    if (!animationsEnabled || !galleryRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in')
+          }
+        })
+      },
+      { threshold: 0.1 }
+    )
+
+    const videoElements = galleryRef.current.querySelectorAll('.video-item')
+    videoElements.forEach((el) => observer.observe(el))
+
+    return () => {
+      videoElements.forEach((el) => observer.unobserve(el))
+    }
+  }, [videos, animationsEnabled])
+
+  if (!videos || videos.length === 0) return null
+
+  return (
+    <section className="py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <h2 
+          className={`text-3xl font-serif font-bold text-center mb-12 text-gray-800 ${
+            animationsEnabled ? 'animate-fade-in-up' : ''
+          }`}
+        >
+          Our Videos
+        </h2>
+        
+        {/* Carousel Container */}
+        <div 
+          ref={galleryRef}
+          className="relative w-full"
+        >
+          {/* Main Carousel Video */}
+          <div className="relative w-full h-[70vh] md:h-[80vh] rounded-2xl overflow-hidden shadow-2xl bg-black">
+            {videos.map((video, index) => (
+              <div
+                key={index}
+                className={`absolute inset-0 transition-opacity duration-700 ${
+                  index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                }`}
+              >
+                <video
+                  ref={(el) => (videoRefs.current[index] = el)}
+                  src={video}
+                  className="w-full h-full object-cover"
+                  onEnded={() => handleVideoEnd(index)}
+                  onPlay={() => setPlayingIndex(index)}
+                  onPause={() => {
+                    if (playingIndex === index) {
+                      setPlayingIndex(null)
+                    }
+                  }}
+                  playsInline
+                  controls={playingIndex === index}
+                />
+                
+                {/* Play/Pause Overlay */}
+                {playingIndex !== index && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <button
+                      onClick={() => togglePlay(index)}
+                      className="bg-white/90 hover:bg-white text-gray-800 rounded-full p-6 shadow-lg transition-all duration-300 hover:scale-110"
+                      aria-label="Play video"
+                    >
+                      <Play className="w-12 h-12" fill="currentColor" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+            
+            {/* Navigation Arrows */}
+            {videos.length > 1 && (
+              <>
+                <button
+                  onClick={prevVideo}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                  aria-label="Previous video"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={nextVideo}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                  aria-label="Next video"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+            
+            {/* Video Counter */}
+            {videos.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
+                {currentIndex + 1} / {videos.length}
+              </div>
+            )}
+          </div>
+          
+          {/* Thumbnail Strip */}
+          {videos.length > 1 && (
+            <div className="mt-6 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {videos.map((video, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    // Pause current video
+                    if (playingIndex !== null && videoRefs.current[playingIndex]) {
+                      videoRefs.current[playingIndex].pause()
+                    }
+                    setCurrentIndex(index)
+                    setPlayingIndex(null)
+                  }}
+                  className={`flex-shrink-0 w-32 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 relative ${
+                    index === currentIndex 
+                      ? 'border-primary scale-110 shadow-lg' 
+                      : 'border-transparent opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <video
+                    src={video}
+                    className="w-full h-full object-cover"
+                    muted
+                    playsInline
+                  />
+                  {index === currentIndex && playingIndex === index && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <Pause className="w-6 h-6 text-white" />
+                    </div>
+                  )}
+                  {index === currentIndex && playingIndex !== index && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <Play className="w-6 h-6 text-white" fill="currentColor" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        
+      </div>
+    </section>
+  )
+}
+
+export default CelebrationVideos
+

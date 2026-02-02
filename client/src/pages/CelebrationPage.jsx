@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner'
 import CelebrationHeader from '../components/celebration/CelebrationHeader'
 import CelebrationStory from '../components/celebration/CelebrationStory'
 import CelebrationGallery from '../components/celebration/CelebrationGallery'
+import CelebrationVideos from '../components/celebration/CelebrationVideos'
 import CelebrationWishes from '../components/celebration/CelebrationWishes'
 import CelebrationContribution from '../components/celebration/CelebrationContribution'
 import CelebrationSpotify from '../components/celebration/CelebrationSpotify'
@@ -118,6 +119,10 @@ const CelebrationPage = () => {
       
       {celebration.sections?.gallery !== false && celebration.images?.length > 0 && (
         <CelebrationGallery images={celebration.images} />
+      )}
+      
+      {celebration.videos?.length > 0 && (
+        <CelebrationVideos videos={celebration.videos} />
       )}
       
       {celebration.sections?.wishes !== false && (

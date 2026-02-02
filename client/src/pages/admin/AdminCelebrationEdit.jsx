@@ -168,6 +168,105 @@ const AdminCelebrationEdit = () => {
     }
   }
 
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) {
+      console.warn('⚠️ No file selected')
+      return
+    }
+    
+    // Validate file
+    const maxSize = 100 * 1024 * 1024 // 100MB
+    if (file.size > maxSize) {
+      toast.error('Video size must be less than 100MB')
+      console.error('❌ File too large:', file.size, 'bytes')
+      return
+    }
+    
+    const allowedTypes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska']
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Only MP4, WebM, MOV, AVI, and MKV videos are allowed')
+      console.error('❌ Invalid file type:', file.type)
+      return
+    }
+    
+    console.log(`📤 Uploading video:`, {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    })
+    
+    // Set uploading state
+    setUploading({ type: 'video', progress: 0 })
+    
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('video', file)
+      
+      console.log('🔄 Sending video upload request to /upload/video')
+      const response = await api.post('/upload/video', uploadFormData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          setUploading({ type: 'video', progress: percentCompleted })
+          console.log(`📊 Upload progress: ${percentCompleted}%`)
+        },
+      })
+      
+      console.log('✅ Video upload successful:', response.data)
+      
+      if (!response.data || !response.data.url) {
+        throw new Error('Invalid response from server: missing URL')
+      }
+      
+      // Add video to videos array
+      setFormData(prev => ({ 
+        ...prev, 
+        videos: [...(prev.videos || []), response.data.url] 
+      }))
+      console.log('✅ Video added to gallery')
+      
+      toast.success('Video uploaded successfully!')
+      
+      // Reset uploading state
+      setUploading({ type: null, progress: 0 })
+      
+      // Reset file input
+      e.target.value = ''
+    } catch (error) {
+      console.error('❌ Video upload error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+      })
+      
+      let errorMessage = 'Failed to upload video'
+      
+      if (error.response) {
+        errorMessage = error.response.data?.message || errorMessage
+        console.error('Server error response:', error.response.data)
+      } else if (error.request) {
+        errorMessage = 'No response from server. Is the backend running?'
+        console.error('No response received:', error.request)
+      } else {
+        errorMessage = error.message || errorMessage
+        console.error('Request setup error:', error.message)
+      }
+      
+      toast.error(errorMessage)
+      
+      // Reset uploading state on error
+      setUploading({ type: null, progress: 0 })
+      
+      // Reset file input on error
+      e.target.value = ''
+    }
+  }
+
   const handleImageUpload = async (e, type = 'cover') => {
     const file = e.target.files[0]
     if (!file) {
@@ -445,7 +544,64 @@ const AdminCelebrationEdit = () => {
               accept="image/*"
               onChange={(e) => handleImageUpload(e, 'gallery')}
               className="input-field"
+              disabled={uploading.type === 'gallery'}
             />
+            {uploading.type === 'gallery' && (
+              <div className="space-y-1">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploading.progress}%` }}
+                  />
+                </div>
+                <p className="text-sm text-gray-600">Uploading image... {uploading.progress}%</p>
+              </div>
+            )}
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Videos
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-2">
+              {(formData.videos || []).map((video, idx) => (
+                <div key={idx} className="relative">
+                  <video 
+                    src={video} 
+                    className="w-full h-32 object-cover rounded"
+                    controls
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, videos: (formData.videos || []).filter((_, i) => i !== idx) })}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleVideoUpload}
+              className="input-field"
+              disabled={uploading.type === 'video'}
+            />
+            {uploading.type === 'video' && (
+              <div className="space-y-1">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploading.progress}%` }}
+                  />
+                </div>
+                <p className="text-sm text-gray-600">Uploading video... {uploading.progress}%</p>
+              </div>
+            )}
+            <p className="text-xs text-gray-500 mt-1">
+              Upload videos (MP4, WebM, MOV, AVI, MKV). Max size: 100MB per video.
+            </p>
           </div>
         </div>
         

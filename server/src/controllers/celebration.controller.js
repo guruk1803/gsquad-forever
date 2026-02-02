@@ -1,4 +1,15 @@
 import pool from '../db/connection.js'
+import { v2 as cloudinary } from 'cloudinary'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export const getAllCelebrations = async (req, res) => {
   try {
@@ -267,6 +278,123 @@ export const updateCelebration = async (req, res) => {
   }
 }
 
+/**
+ * Extract Cloudinary public_id from a Cloudinary URL
+ * Handles various Cloudinary URL formats:
+ * - https://res.cloudinary.com/{cloud_name}/image/upload/{public_id}.{format}
+ * - https://res.cloudinary.com/{cloud_name}/image/upload/v{version}/{public_id}.{format}
+ * - https://res.cloudinary.com/{cloud_name}/image/upload/{transformations}/{public_id}.{format}
+ * - https://res.cloudinary.com/{cloud_name}/image/upload/v{version}/{transformations}/{public_id}.{format}
+ */
+const extractPublicId = (url) => {
+  if (!url || typeof url !== 'string') return null
+  
+  try {
+    // Check if it's a Cloudinary URL
+    if (!url.includes('cloudinary.com')) return null
+    
+    // Extract the path after /image/upload/
+    // Pattern: /image/upload/(optional version/)(optional transformations/)(public_id).(format)
+    const uploadMatch = url.match(/\/image\/upload\/(?:v\d+\/)?(?:[^\/]+\/)*(.+)/)
+    if (!uploadMatch) return null
+    
+    // Get the public_id (last part after all transformations)
+    let publicId = uploadMatch[1]
+    
+    // Remove file extension if present
+    publicId = publicId.replace(/\.(jpg|jpeg|png|gif|webp|webm|mp4)$/i, '')
+    
+    // Remove query parameters if any
+    publicId = publicId.split('?')[0]
+    
+    return publicId
+  } catch (error) {
+    console.error('Error extracting public_id from URL:', url, error)
+    return null
+  }
+}
+
+/**
+ * Delete an image from Cloudinary by public_id
+ */
+const deleteCloudinaryImage = async (publicId) => {
+  if (!publicId) return false
+  
+  try {
+    // Check if Cloudinary is configured
+    if (!process.env.CLOUDINARY_CLOUD_NAME || 
+        !process.env.CLOUDINARY_API_KEY || 
+        !process.env.CLOUDINARY_API_SECRET) {
+      console.warn('⚠️ Cloudinary not configured, skipping image deletion')
+      return false
+    }
+    
+    const result = await cloudinary.uploader.destroy(publicId)
+    
+    if (result.result === 'ok' || result.result === 'not found') {
+      console.log(`✅ Deleted image from Cloudinary: ${publicId}`)
+      return true
+    } else {
+      console.warn(`⚠️ Failed to delete image from Cloudinary: ${publicId}`, result)
+      return false
+    }
+  } catch (error) {
+    console.error(`❌ Error deleting image from Cloudinary (${publicId}):`, error.message)
+    return false
+  }
+}
+
+/**
+ * Delete all images associated with a celebration from Cloudinary
+ */
+const deleteCelebrationImages = async (celebration) => {
+  const deletedImages = []
+  const failedImages = []
+  
+  // Collect all image URLs
+  const imageUrls = []
+  
+  // Cover image
+  if (celebration.cover_image) {
+    imageUrls.push(celebration.cover_image)
+  }
+  
+  // Images array
+  if (celebration.images && Array.isArray(celebration.images)) {
+    imageUrls.push(...celebration.images)
+  }
+  
+  // QR image
+  if (celebration.qr_image) {
+    imageUrls.push(celebration.qr_image)
+  }
+  
+  // Spotify code image
+  if (celebration.spotify_code) {
+    imageUrls.push(celebration.spotify_code)
+  }
+  
+  // Delete each image
+  for (const url of imageUrls) {
+    if (!url) continue
+    
+    const publicId = extractPublicId(url)
+    if (!publicId) {
+      console.warn(`⚠️ Could not extract public_id from URL: ${url}`)
+      continue
+    }
+    
+    const deleted = await deleteCloudinaryImage(publicId)
+    if (deleted) {
+      deletedImages.push(publicId)
+    } else {
+      failedImages.push(publicId)
+    }
+  }
+  
+  return { deletedImages, failedImages }
+}
+
 export const deleteCelebration = async (req, res) => {
   try {
     const { id } = req.params
@@ -277,13 +405,43 @@ export const deleteCelebration = async (req, res) => {
     }
     
     const celebrationId = parseInt(id)
-    const result = await pool.query('DELETE FROM celebrations WHERE id = $1 RETURNING id', [celebrationId])
-
-    if (result.rows.length === 0) {
+    
+    // First, fetch the celebration to get all image URLs
+    const celebrationResult = await pool.query(
+      'SELECT * FROM celebrations WHERE id = $1',
+      [celebrationId]
+    )
+    
+    if (celebrationResult.rows.length === 0) {
       return res.status(404).json({ message: 'Celebration not found' })
     }
-
-    res.json({ message: 'Celebration deleted successfully' })
+    
+    const celebration = celebrationResult.rows[0]
+    
+    // Delete all images from Cloudinary
+    console.log(`🗑️ Deleting images for celebration: ${celebration.title} (ID: ${celebrationId})`)
+    const { deletedImages, failedImages } = await deleteCelebrationImages(celebration)
+    
+    console.log(`✅ Deleted ${deletedImages.length} images from Cloudinary`)
+    if (failedImages.length > 0) {
+      console.warn(`⚠️ Failed to delete ${failedImages.length} images from Cloudinary`)
+    }
+    
+    // Delete the celebration from database (this will cascade delete wishes due to ON DELETE CASCADE)
+    const deleteResult = await pool.query(
+      'DELETE FROM celebrations WHERE id = $1 RETURNING id',
+      [celebrationId]
+    )
+    
+    if (deleteResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Celebration not found' })
+    }
+    
+    res.json({ 
+      message: 'Celebration deleted successfully',
+      deletedImages: deletedImages.length,
+      failedImages: failedImages.length
+    })
   } catch (error) {
     console.error('Delete celebration error:', error)
     res.status(500).json({ message: 'Failed to delete celebration' })

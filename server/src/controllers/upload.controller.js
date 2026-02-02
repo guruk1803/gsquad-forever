@@ -35,7 +35,7 @@ const imageUpload = multer({
 })
 
 // Multer for videos
-const uploadVideo = multer({
+const videoUpload = multer({
   storage: storage,
   limits: {
     fileSize: 100 * 1024 * 1024, // 100MB for videos
@@ -224,7 +224,7 @@ export const uploadVideo = async (req, res) => {
     })
   }
   
-  uploadVideo.single('video')(req, res, async (err) => {
+  videoUpload.single('video')(req, res, async (err) => {
     if (err) {
       console.error('❌ Multer error:', err.message)
       console.error('Error details:', err)

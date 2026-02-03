@@ -389,14 +389,14 @@ const AdminCelebrationEdit = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <h1 className="text-3xl font-serif font-bold text-gray-800">
+    <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+      <h1 className="text-2xl sm:text-3xl font-serif font-bold text-gray-800">
         {isNew ? 'Create Celebration' : 'Edit Celebration'}
       </h1>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">Basic Information</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Basic Information</h2>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -404,7 +404,7 @@ const AdminCelebrationEdit = () => {
             </label>
             <input
               type="text"
-              className="input-field"
+              className="input-field text-base"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
@@ -417,7 +417,7 @@ const AdminCelebrationEdit = () => {
             </label>
             <input
               type="text"
-              className="input-field"
+              className="input-field text-base"
               value={formData.subtitle}
               onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
             />
@@ -429,7 +429,7 @@ const AdminCelebrationEdit = () => {
             </label>
               <input
                 type="text"
-                className="input-field"
+                className="input-field text-base"
                 value={formData.slug}
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
                 required
@@ -439,13 +439,13 @@ const AdminCelebrationEdit = () => {
               </p>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Event Type
               </label>
               <select
-                className="input-field"
+                className="input-field text-base"
                 value={formData.eventType}
                 onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
               >
@@ -465,7 +465,7 @@ const AdminCelebrationEdit = () => {
               </label>
               <input
                 type="date"
-                className="input-field"
+                className="input-field text-base"
                 value={formData.eventDate}
                 onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
               />
@@ -474,7 +474,7 @@ const AdminCelebrationEdit = () => {
         </div>
         
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">Content</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Content</h2>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -490,7 +490,7 @@ const AdminCelebrationEdit = () => {
         </div>
         
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">Media</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Media</h2>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -525,14 +525,14 @@ const AdminCelebrationEdit = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Gallery Images
             </label>
-            <div className="grid grid-cols-4 gap-2 mb-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-2">
               {(formData.images || []).map((img, idx) => (
                 <div key={idx} className="relative">
-                  <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-24 object-cover rounded" />
+                  <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-20 sm:h-24 object-cover rounded" />
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, images: (formData.images || []).filter((_, i) => i !== idx) })}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs touch-manipulation"
                   >
                     ×
                   </button>
@@ -563,18 +563,18 @@ const AdminCelebrationEdit = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Videos
             </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-2">
               {(formData.videos || []).map((video, idx) => (
                 <div key={idx} className="relative">
                   <video 
                     src={video} 
-                    className="w-full h-32 object-cover rounded"
+                    className="w-full h-24 sm:h-32 object-cover rounded"
                     controls
                   />
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, videos: (formData.videos || []).filter((_, i) => i !== idx) })}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs touch-manipulation"
                   >
                     ×
                   </button>
@@ -606,9 +606,9 @@ const AdminCelebrationEdit = () => {
         </div>
         
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">Theme & Colors</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Theme & Colors</h2>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Primary Color
@@ -680,7 +680,7 @@ const AdminCelebrationEdit = () => {
         </div>
         
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">Sections</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Sections</h2>
           
           {Object.entries(formData.sections || {}).map(([key, value]) => (
             <div key={key} className="flex items-center gap-2">
@@ -702,7 +702,7 @@ const AdminCelebrationEdit = () => {
         </div>
         
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">Money Collection</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Money Collection</h2>
           
           <div className="flex items-center gap-2 mb-4">
             <input
@@ -750,7 +750,7 @@ const AdminCelebrationEdit = () => {
         </div>
         
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">Spotify Code</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Spotify Code</h2>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Spotify Code Image
@@ -788,14 +788,14 @@ const AdminCelebrationEdit = () => {
           <button
             type="submit"
             disabled={saving}
-            className="btn-primary bg-primary text-white flex-1 disabled:opacity-50"
+            className="btn-primary bg-primary text-white flex-1 disabled:opacity-50 text-sm sm:text-base py-3 touch-manipulation"
           >
             {saving ? 'Saving...' : isNew ? 'Create Celebration' : 'Save Changes'}
           </button>
           <button
             type="button"
             onClick={() => navigate('/admin/celebrations')}
-            className="btn-secondary border-gray-300 text-gray-700"
+            className="btn-secondary border-gray-300 text-gray-700 text-sm sm:text-base py-3 touch-manipulation"
           >
             Cancel
           </button>

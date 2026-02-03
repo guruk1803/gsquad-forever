@@ -22,14 +22,19 @@ function App() {
               </Routes>
               <Toaster 
                 position="top-center"
+                containerStyle={{
+                  top: '20px',
+                }}
                 toastOptions={{
                   duration: 3000,
                   style: {
                     background: '#fff',
                     color: '#333',
                     borderRadius: '12px',
-                    padding: '16px',
+                    padding: '12px 16px',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    fontSize: '14px',
+                    maxWidth: '90vw',
                   },
                 }}
               />

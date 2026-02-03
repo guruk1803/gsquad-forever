@@ -111,10 +111,10 @@ const CelebrationVideos = ({ videos }) => {
   if (!videos || videos.length === 0) return null
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+    <section className="py-8 sm:py-12 md:py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <h2 
-          className={`text-3xl font-serif font-bold text-center mb-12 text-gray-800 ${
+          className={`text-2xl sm:text-3xl font-serif font-bold text-center mb-6 sm:mb-8 md:mb-12 text-gray-800 ${
             animationsEnabled ? 'animate-fade-in-up' : ''
           }`}
         >
@@ -127,7 +127,7 @@ const CelebrationVideos = ({ videos }) => {
           className="relative w-full"
         >
           {/* Main Carousel Video */}
-          <div className="relative w-full h-[70vh] md:h-[80vh] rounded-2xl overflow-hidden shadow-2xl bg-black">
+          <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl bg-black">
             {videos.map((video, index) => (
               <div
                 key={index}
@@ -138,7 +138,7 @@ const CelebrationVideos = ({ videos }) => {
                 <video
                   ref={(el) => (videoRefs.current[index] = el)}
                   src={video}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   onEnded={() => handleVideoEnd(index)}
                   onPlay={() => setPlayingIndex(index)}
                   onPause={() => {
@@ -155,10 +155,10 @@ const CelebrationVideos = ({ videos }) => {
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                     <button
                       onClick={() => togglePlay(index)}
-                      className="bg-white/90 hover:bg-white text-gray-800 rounded-full p-6 shadow-lg transition-all duration-300 hover:scale-110"
+                      className="bg-white/90 hover:bg-white text-gray-800 rounded-full p-4 sm:p-5 md:p-6 shadow-lg transition-all duration-300 hover:scale-110 touch-manipulation"
                       aria-label="Play video"
                     >
-                      <Play className="w-12 h-12" fill="currentColor" />
+                      <Play className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" fill="currentColor" />
                     </button>
                   </div>
                 )}
@@ -170,24 +170,24 @@ const CelebrationVideos = ({ videos }) => {
               <>
                 <button
                   onClick={prevVideo}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 sm:p-3 shadow-lg transition-all duration-300 hover:scale-110 touch-manipulation"
                   aria-label="Previous video"
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </button>
                 <button
                   onClick={nextVideo}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 sm:p-3 shadow-lg transition-all duration-300 hover:scale-110 touch-manipulation"
                   aria-label="Next video"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </button>
               </>
             )}
             
             {/* Video Counter */}
             {videos.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
+              <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm">
                 {currentIndex + 1} / {videos.length}
               </div>
             )}
@@ -195,7 +195,7 @@ const CelebrationVideos = ({ videos }) => {
           
           {/* Thumbnail Strip */}
           {videos.length > 1 && (
-            <div className="mt-6 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="mt-4 sm:mt-6 flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide">
               {videos.map((video, index) => (
                 <button
                   key={index}
@@ -207,9 +207,9 @@ const CelebrationVideos = ({ videos }) => {
                     setCurrentIndex(index)
                     setPlayingIndex(null)
                   }}
-                  className={`flex-shrink-0 w-32 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 relative ${
+                  className={`flex-shrink-0 w-20 h-12 sm:w-24 sm:h-14 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 relative touch-manipulation ${
                     index === currentIndex 
-                      ? 'border-primary scale-110 shadow-lg' 
+                      ? 'border-primary scale-105 sm:scale-110 shadow-lg' 
                       : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
@@ -221,12 +221,12 @@ const CelebrationVideos = ({ videos }) => {
                   />
                   {index === currentIndex && playingIndex === index && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                      <Pause className="w-6 h-6 text-white" />
+                      <Pause className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
                     </div>
                   )}
                   {index === currentIndex && playingIndex !== index && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                      <Play className="w-6 h-6 text-white" fill="currentColor" />
+                      <Play className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" fill="currentColor" />
                     </div>
                   )}
                 </button>
@@ -241,4 +241,5 @@ const CelebrationVideos = ({ videos }) => {
 }
 
 export default CelebrationVideos
+
 

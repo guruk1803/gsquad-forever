@@ -67,10 +67,10 @@ const CelebrationGallery = ({ images }) => {
   }, [images, animationsEnabled])
 
   return (
-    <section className="py-16 px-4 bg-white/50 overflow-hidden">
+    <section className="py-8 sm:py-12 md:py-16 px-4 bg-white/50 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <h2 
-          className={`text-3xl font-serif font-bold text-center mb-12 text-gray-800 ${
+          className={`text-2xl sm:text-3xl font-serif font-bold text-center mb-6 sm:mb-8 md:mb-12 text-gray-800 ${
             animationsEnabled ? 'animate-fade-in-up' : ''
           }`}
         >
@@ -83,7 +83,7 @@ const CelebrationGallery = ({ images }) => {
           className="relative w-full"
         >
           {/* Main Carousel Image */}
-          <div className="relative w-full h-[70vh] md:h-[80vh] rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl">
             {images.map((image, index) => (
               <div
                 key={index}
@@ -106,24 +106,24 @@ const CelebrationGallery = ({ images }) => {
               <>
                 <button
                   onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 sm:p-3 shadow-lg transition-all duration-300 hover:scale-110 touch-manipulation"
                   aria-label="Previous image"
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </button>
                 <button
                   onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110"
+                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 sm:p-3 shadow-lg transition-all duration-300 hover:scale-110 touch-manipulation"
                   aria-label="Next image"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </button>
               </>
             )}
             
             {/* Image Counter */}
             {images.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
+              <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm">
                 {currentIndex + 1} / {images.length}
               </div>
             )}
@@ -131,14 +131,14 @@ const CelebrationGallery = ({ images }) => {
           
           {/* Thumbnail Strip */}
           {images.length > 1 && (
-            <div className="mt-6 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="mt-4 sm:mt-6 flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide">
               {images.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
-                  className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                  className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 transition-all duration-300 touch-manipulation ${
                     index === currentIndex 
-                      ? 'border-primary scale-110 shadow-lg' 
+                      ? 'border-primary scale-105 sm:scale-110 shadow-lg' 
                       : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
@@ -161,10 +161,10 @@ const CelebrationGallery = ({ images }) => {
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-4 right-4 text-white hover:text-gray-300"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 p-2 touch-manipulation"
             onClick={() => setSelectedImage(null)}
           >
-            <X className="w-8 h-8" />
+            <X className="w-6 h-6 sm:w-8 sm:h-8" />
           </button>
           <img
             src={selectedImage}

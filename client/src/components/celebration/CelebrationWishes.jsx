@@ -41,28 +41,28 @@ const CelebrationWishes = ({ celebrationId }) => {
   }
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-center mb-8">
-          <Heart className="w-10 h-10 text-primary fill-primary" />
+        <div className="flex justify-center mb-6 sm:mb-8">
+          <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-primary fill-primary" />
         </div>
-        <h2 className="text-3xl font-serif font-bold text-center mb-12 text-gray-800">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-center mb-8 sm:mb-12 text-gray-800">
           Send Your Wishes
         </h2>
         
-        <form onSubmit={handleSubmit} className="card mb-12">
+        <form onSubmit={handleSubmit} className="card mb-8 sm:mb-12">
           <div className="space-y-4">
             <input
               type="text"
               placeholder="Your Name"
-              className="input-field"
+              className="input-field text-base"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
             />
             <textarea
               placeholder="Your Message"
-              className="input-field min-h-[120px] resize-none"
+              className="input-field min-h-[100px] sm:min-h-[120px] resize-none text-base"
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               required
@@ -70,7 +70,7 @@ const CelebrationWishes = ({ celebrationId }) => {
             <input
               type="number"
               placeholder="Contribution Amount (Optional)"
-              className="input-field"
+              className="input-field text-base"
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
               min="0"
@@ -78,7 +78,7 @@ const CelebrationWishes = ({ celebrationId }) => {
             />
             <button
               type="submit"
-              className="btn-primary bg-primary text-white w-full flex items-center justify-center gap-2"
+              className="btn-primary bg-primary text-white w-full flex items-center justify-center gap-2 text-base py-3 touch-manipulation"
             >
               <Send className="w-5 h-5" />
               Send Wish
@@ -86,23 +86,23 @@ const CelebrationWishes = ({ celebrationId }) => {
           </div>
         </form>
         
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {loading ? (
-            <p className="text-center text-gray-500">Loading wishes...</p>
+            <p className="text-center text-gray-500 text-sm sm:text-base">Loading wishes...</p>
           ) : wishes.length === 0 ? (
-            <p className="text-center text-gray-500">No wishes yet. Be the first to send one!</p>
+            <p className="text-center text-gray-500 text-sm sm:text-base">No wishes yet. Be the first to send one!</p>
           ) : (
             wishes.map((wish) => (
               <div key={wish.id} className="card">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-6 h-6 text-primary" />
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800 mb-1">{wish.name}</h4>
-                    <p className="text-gray-600 mb-2">{wish.message}</p>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-gray-800 mb-1 text-sm sm:text-base">{wish.name}</h4>
+                    <p className="text-gray-600 mb-2 text-sm sm:text-base break-words">{wish.message}</p>
                     {wish.amount && Number(wish.amount) > 0 && (
-                      <p className="text-sm text-primary font-medium">
+                      <p className="text-xs sm:text-sm text-primary font-medium">
                         Contributed: ₹{Number(wish.amount).toFixed(2)}
                       </p>
                     )}
